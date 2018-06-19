@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>kafka</groupId>
+    <artifactId>kafkademo</artifactId>
+    <version>0.0.1</version>
+
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>http://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
+
+	<properties>
+        <java.version>1.8</java.version>
+        <kafka.version>0.10.0.0-cp1</kafka.version>
+        <kafka.scala.version>2.11</kafka.scala.version>
+        <scala.version>${kafka.scala.version}.8</scala.version>
+        <confluent.version>3.0.0</confluent.version>
+        <scalatest.version>2.2.6</scalatest.version>
+        <avro.version>1.7.7</avro.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+		<!-- JDK Tools -->
+		<dependency>
+			<groupId>jdk.tools</groupId>
+			<artifactId>jdk.tools</artifactId>
+			<scope>system</scope>
+			<version>1.8.0_131</version>
+			<systemPath>C:/Program Files/Java/jdk1.8.0_131/lib/tools.jar</systemPath>
+		</dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>${confluent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-schema-registry-client</artifactId>
+            <version>${confluent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+            <version>${kafka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${avro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-maven-plugin</artifactId>
+            <version>${avro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <!-- This version must be compatible with the Scala version of the Kafka dependency. -->
+            <version>${scala.version}</version>
+        </dependency>
+    </dependencies>
+    
+    <build>
+    	<plugins>
+    		<plugin>
+    			<groupId>org.apache.maven.plugins</groupId>
+   				<artifactId>maven-compiler-plugin</artifactId>
+    			<version>3.1</version>
+    			<configuration>
+         			<source>1.8</source>
+         			<target>1.8</target>
+    			</configuration>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>${avro.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                            <goal>protocol</goal>
+                            <goal>idl-protocol</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/resources/avro</sourceDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>uber-${artifactId}-${version}</finalName>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>false</downloadJavadocs>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+				  <!-- DO NOT include log4j.properties file in your Jar -->
+				  <excludes>
+					<exclude>**/log4j.properties</exclude>
+				  </excludes>
+				  <archive>
+					<manifest>
+						<!-- Jar file entry point -->
+						<mainClass>com.mkyong.core.utils.App</mainClass>
+					</manifest>
+				  </archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+</project>
